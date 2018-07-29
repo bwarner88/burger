@@ -1,43 +1,36 @@
-var express = require('express');
-var burger = require('../models/burger.js');
+
+
+var express = require("express");
 
 var router = express.Router();
+var burger = require("../models/burger.js");
 
-router.get("/", function(req, res){
-    burger.selectAll(function(data){
-        var burgerObejct = {
-            burger: data
-        };
-        console.log(burgerObject);
-        res.render("index", burgerObject);
+// INITIAL GET ROUTE THAT REDIRECTS TO BURGERS
+router.get("/", function (req, res) {
+    res.redirect("/burgers");
+});
+
+//GET ROUTE THAT SELECTS ALL DATA FROM THE TABLE
+router.get("/burgers", function (req, res) {
+    burger.selectAll(function (burgerData) {
+        res.render("index", { burger_data: burgerData });
     });
 });
 
-//POST that creates a new burger
-router.post("/api/burger", function(req, res){
-    burger.insterOne(["",""],[req.body.PARAMETER, req.body.PARAMETER], function(result) {
-        res.json({id: result.insertID}); //not sure about this line ask about this!!
+// POST ROUTE CREATE NEW DATA 
+router.post("/burgers/create", function (req, res) {
+    burger.insertOne(req.body.burger_name, function (result) {
+        console.log(result);
+        res.redirect("/");
     });
 });
 
-//PUT that updates the table
-router.put("/api/burger/:[NOT SURE WHAT THIS IS]", function(req, res) {
-    var condition = "id = " + req.params.id; ////not sure about this line ask about this!!
-
-    console.log(condition);
-
-    burger.updateOne(
-        {
-            devour: req.body.devour
-        },
-        condition,
-        function(result) {
-            if (result.changedRows === 0) {
-                return res.status(404).end()
-            }
-            res.status(202).end();
-        }
-    );
+//PUT ROUTE UPDATING EXISTING DATA
+router.put("/burgers/:id", function (req, res) {
+    burger.updateOne(req.params.id, function (result) {
+        console.log(result);
+        res.sendStatus(200);
+    });
 });
 
-module.export = router;
+module.exports = router;

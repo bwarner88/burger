@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+var mysql = require("mysql");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -9,8 +9,12 @@ var connection = mysql.createConnection({
 });
 
 connection.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
+  if (err) {
+    console.error("error connecting: " + err.stack);
+    return;
+  } 
+  console.log("connected")
+  
 });
 
-module.export = connection;
+module.exports = connection;
